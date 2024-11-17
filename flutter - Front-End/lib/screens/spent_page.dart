@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:cofrinho/utils/DecimalTextInputFormatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,15 +19,39 @@ class _SpentPageState extends State<SpentPage> {
   final _dfDay = DateFormat('dd/MM/yyyy');
 
   final _formKey = GlobalKey<FormState>();
+  final _valueContronller = TextEditingController();
   final _descriptionController = TextEditingController();
   final _periodController = TextEditingController();
   final _payedDateController = TextEditingController();
+  final _decimalFormatter = DecimalTextInputFormatter();
+
+  List<String> categories = ['Opção 1', 'Opção 2', 'Opção 3'];
+  String? selectedCategory;
 
   File? _billFile;
   FilePickerResult? _billFileResult;
 
   File? _voucherFile;
   FilePickerResult? _voucherFileResult;
+
+  String? validatorCustom(String? value, String label) {
+    if (label == 'valor') {
+      try {
+        RegExp regex = _decimalFormatter.regExp();
+
+        if (!regex.hasMatch(value!)) {
+          return "O valor $value é um número decimal válido.";
+        }
+      } catch (e) {
+        return "O valor $value é um número decimal válido.";
+      }
+    }
+
+    if (value == null || value.isEmpty) {
+      return 'Por favor, preencha a $label';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +68,48 @@ class _SpentPageState extends State<SpentPage> {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
-            //ListView(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
-            // padding: const EdgeInsets.all(12.0),
             children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Selecione uma categoria',
+                    icon: Icon(
+                      Icons.category,
+                    ),
+                  ),
+                  value: selectedCategory,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCategory = newValue!;
+                    });
+                  },
+                  items: categories.map((String item) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: TextFormField(
+                  controller: _valueContronller,
+                  // textInputAction: TextInputAction.none,
+                  inputFormatters: [_decimalFormatter],
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Valor',
+                    icon: Icon(
+                      Icons.monetization_on,
+                    ),
+                  ),
+                  validator: (value) => validatorCustom(value, 'valor'),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextFormField(
@@ -59,12 +122,6 @@ class _SpentPageState extends State<SpentPage> {
                       Icons.description,
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, preencha a descrição';
-                    }
-                    return null;
-                  },
                 ),
               ),
               Padding(
@@ -103,7 +160,7 @@ class _SpentPageState extends State<SpentPage> {
                   textInputAction: TextInputAction.none,
                   keyboardType: TextInputType.none,
                   decoration: const InputDecoration(
-                    labelText: 'Dia de pagamento',
+                    labelText: 'Dia do pagamento',
                     icon: Icon(
                       Icons.calendar_month,
                     ),
@@ -132,7 +189,7 @@ class _SpentPageState extends State<SpentPage> {
                   const Padding(
                     padding: EdgeInsets.all(12.0),
                     child: Icon(
-                      Icons.calendar_month,
+                      Icons.file_present,
                     ),
                   ),
                   ElevatedButton(
@@ -164,7 +221,7 @@ class _SpentPageState extends State<SpentPage> {
                   const Padding(
                     padding: EdgeInsets.all(12.0),
                     child: Icon(
-                      Icons.calendar_month,
+                      Icons.file_present,
                     ),
                   ),
                   ElevatedButton(
