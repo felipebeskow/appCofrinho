@@ -1,4 +1,4 @@
-const Spend = require('../api/spend');
+const Spend = require('../controller/spend');
 
 const route = require('express').Router();
 //rotas publicas

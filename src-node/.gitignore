@@ -3,6 +3,7 @@
 
 ### dotenv ###
 .env
+ca.pem
 
 ### Node ###
 # Logs

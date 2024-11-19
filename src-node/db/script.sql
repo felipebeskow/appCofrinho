@@ -1,0 +1,11 @@
+CREATE EXTENSION "uuid-ossp";
+
+CREATE TABLE "CATEGORIAS"(
+    "CAT_CODIGO" SERIAL,
+    "CAT_UUID" uuid NOT NULL DEFAULT uuid_generate_v4(),
+    "CAT_NOME" varchar(100) NOT NULL,
+    "CAT_DESCRICAO" text,
+    PRIMARY KEY ("CAT_CODIGO")
+) TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS "CATEGORIAS" OWNER to avnadmin;

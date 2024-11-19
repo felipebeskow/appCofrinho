@@ -7,6 +7,6 @@ app.use(bodyParser.json());
 app.use(cors({
     origin: '*'
 }))
-app.use(express.static('public'))
+app.use(express.static('web'))
 app.use('/api/', route)
 module.exports = app
