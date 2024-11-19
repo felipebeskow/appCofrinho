@@ -1,5 +1,6 @@
 const Category = require('../controller/category');
 const Spend = require('../controller/spend');
+const wallet = require('../controller/wallet');
 
 const route = require('express').Router();
 //rotas publicas
@@ -11,4 +12,6 @@ route.get('/', async (req, res) => {
 route.post('/spend', Spend.post)
 route.post('/category', Category.post)
 route.get('/category', Category.get)
+route.post('/wallet', wallet.post)
+route.get('/wallet', wallet.get)
 module.exports = route;

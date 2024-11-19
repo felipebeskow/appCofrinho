@@ -6,10 +6,10 @@ module.exports = {
         try {
             //let result = await DbConnection.raw(`SELECT VERSION()`)
             await DbConnection.transaction(async (trx) => {
-                const result = await trx('CATEGORIAS')
+                const result = await trx('CARTEIRA')
                     .insert({
-                        CAT_NOME: data.CAT_NOME,
-                        CAT_DESCRICAO: data.CAT_DESCRICAO,
+                        CAR_NOME: data.CAR_NOME,
+                        CAR_DESCRICAO: data.CAR_DESCRICAO,
                     })
 
                 await trx.commit() // Confirma a transação
@@ -25,7 +25,7 @@ module.exports = {
     async get(req, res) {
         const query = req.body.query
         try {
-            const result = await DbConnection('CATEGORIAS')
+            const result = await DbConnection('CARTEIRA')
             res.json(result)
         } catch (error) {
             console.error("Error selecting data:", error);
