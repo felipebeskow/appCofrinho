@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:cofrinho/controller/categories_controller.dart';
+import 'package:cofrinho/model/categories.dart';
 import 'package:cofrinho/utils/DecimalTextInputFormatter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
@@ -25,7 +26,8 @@ class _SpentPageState extends State<SpentPage> {
   final _payedDateController = TextEditingController();
   final _decimalFormatter = DecimalTextInputFormatter();
 
-  List<String> categories = ['Opção 1', 'Opção 2', 'Opção 3'];
+  Future<List<Categories>> categories = CategoriesController().getCategories();
+
   String? selectedCategory;
 
   File? _billFile;
@@ -72,8 +74,45 @@ class _SpentPageState extends State<SpentPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: DropdownButtonFormField(
+                  padding: const EdgeInsets.all(12.0),
+                  child: FutureBuilder<List<Categories>>(
+                    future: categories,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        //return CircularProgressIndicator(); // Mostra um indicador de carregamento
+                        return const Text(
+                            'Carregando categorias'); // Mostra uma mensagem de carregamento
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                            'Erro ao carregar categorias'); // Mostra uma mensagem de erro
+                      } else {
+                        return DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Selecione uma categoria',
+                            icon: Icon(
+                              Icons.category,
+                            ),
+                          ),
+                          value: selectedCategory,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategory = newValue!;
+                            });
+                          },
+                          items: snapshot.data!.map((category) {
+                            return DropdownMenuItem(
+                              value: category.uuid,
+                              child: Text(
+                                category.nome,
+                              ), // Assumindo que category tem um atributo 'name'
+                            );
+                          }).toList(),
+                          // ... outras propriedades do DropdownButtonFormField
+                        );
+                      }
+                    },
+                  )
+                  /*DropdownButtonFormField(
                   decoration: const InputDecoration(
                     labelText: 'Selecione uma categoria',
                     icon: Icon(
@@ -92,8 +131,8 @@ class _SpentPageState extends State<SpentPage> {
                       child: Text(item),
                     );
                   }).toList(),
-                ),
-              ),
+                ),*/
+                  ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextFormField(
