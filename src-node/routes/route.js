@@ -1,7 +1,10 @@
 const Category = require('../controller/category');
+const fileUpload = require('../controller/fileUpload');
 const Spend = require('../controller/spend');
 const wallet = require('../controller/wallet');
+const multer = require('multer');
 
+const upload = multer();
 const route = require('express').Router();
 //rotas publicas
 //redireciona para o front-end
@@ -14,4 +17,5 @@ route.post('/category', Category.post)
 route.get('/category', Category.get)
 route.post('/wallet', wallet.post)
 route.get('/wallet', wallet.get)
+route.post('/upload', upload.single('file'), fileUpload.post)
 module.exports = route;
