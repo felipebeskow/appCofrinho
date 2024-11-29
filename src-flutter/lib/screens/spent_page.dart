@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:cofrinho/controller/categories_controller.dart';
+import 'package:cofrinho/controller/walleties_controller.dart';
 import 'package:cofrinho/model/categories.dart';
+import 'package:cofrinho/model/walleties.dart';
 import 'package:cofrinho/utils/DecimalTextInputFormatter.dart';
 import 'package:flutter/material.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
@@ -27,8 +29,10 @@ class _SpentPageState extends State<SpentPage> {
   final _decimalFormatter = DecimalTextInputFormatter();
 
   Future<List<Categories>> categories = CategoriesController().getCategories();
+  Future<List<Walleties>> walleties = WalletiesController().getWalleties();
 
   String? selectedCategory;
+  String? selectedWallet;
 
   File? _billFile;
   FilePickerResult? _billFileResult;
@@ -74,65 +78,85 @@ class _SpentPageState extends State<SpentPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: FutureBuilder<List<Categories>>(
-                    future: categories,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        //return CircularProgressIndicator(); // Mostra um indicador de carregamento
-                        return const Text(
-                            'Carregando categorias'); // Mostra uma mensagem de carregamento
-                      } else if (snapshot.hasError) {
-                        return const Text(
-                            'Erro ao carregar categorias'); // Mostra uma mensagem de erro
-                      } else {
-                        return DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Selecione uma categoria',
-                            icon: Icon(
-                              Icons.category,
-                            ),
+                padding: const EdgeInsets.all(12.0),
+                child: FutureBuilder<List<Categories>>(
+                  future: categories,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      //return CircularProgressIndicator(); // Mostra um indicador de carregamento
+                      return const Text(
+                          'Carregando categorias'); // Mostra uma mensagem de carregamento
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                          'Erro ao carregar categorias'); // Mostra uma mensagem de erro
+                    } else {
+                      return DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Selecione uma categoria',
+                          icon: Icon(
+                            Icons.category,
                           ),
-                          value: selectedCategory,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedCategory = newValue!;
-                            });
-                          },
-                          items: snapshot.data!.map((category) {
-                            return DropdownMenuItem(
-                              value: category.uuid,
-                              child: Text(
-                                category.nome,
-                              ), // Assumindo que category tem um atributo 'name'
-                            );
-                          }).toList(),
-                          // ... outras propriedades do DropdownButtonFormField
-                        );
-                      }
-                    },
-                  )
-                  /*DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Selecione uma categoria',
-                    icon: Icon(
-                      Icons.category,
-                    ),
-                  ),
-                  value: selectedCategory,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
+                        ),
+                        value: selectedCategory,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCategory = newValue!;
+                          });
+                        },
+                        items: snapshot.data!.map((category) {
+                          return DropdownMenuItem(
+                            value: category.uuid,
+                            child: Text(
+                              category.nome,
+                            ), // Assumindo que category tem um atributo 'name'
+                          );
+                        }).toList(),
+                        // ... outras propriedades do DropdownButtonFormField
+                      );
+                    }
                   },
-                  items: categories.map((String item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
-                ),*/
-                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: FutureBuilder<List<Walleties>>(
+                  future: walleties,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      //return CircularProgressIndicator(); // Mostra um indicador de carregamento
+                      return const Text(
+                          'Carregando carteiras'); // Mostra uma mensagem de carregamento
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                          'Erro ao carregar carteiras'); // Mostra uma mensagem de erro
+                    } else {
+                      return DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Selecione uma carteira',
+                          icon: Icon(
+                            Icons.category,
+                          ),
+                        ),
+                        value: selectedWallet,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedWallet = newValue!;
+                          });
+                        },
+                        items: snapshot.data!.map((wallet) {
+                          return DropdownMenuItem(
+                            value: wallet.uuid,
+                            child: Text(
+                              wallet.nome,
+                            ), // Assumindo que category tem um atributo 'name'
+                          );
+                        }).toList(),
+                        // ... outras propriedades do DropdownButtonFormField
+                      );
+                    }
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextFormField(
